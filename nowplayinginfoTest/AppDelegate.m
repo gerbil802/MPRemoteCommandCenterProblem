@@ -7,8 +7,12 @@
 //
 
 #import "AppDelegate.h"
+#import <MediaPlayer/MediaPlayer.h>
+#import <AVFoundation/AVFoundation.h>
 
 @interface AppDelegate ()
+
+@property (strong, readwrite) NSTimer* timer;
 
 @end
 
@@ -16,7 +20,25 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    [MPRemoteCommandCenter sharedCommandCenter].playCommand.enabled = YES;
+    [[MPRemoteCommandCenter sharedCommandCenter].playCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+    
+    [[MPRemoteCommandCenter sharedCommandCenter].nextTrackCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        NSLog(@"nextTrackCommand");
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+    [MPRemoteCommandCenter sharedCommandCenter].nextTrackCommand.enabled = YES;
+    
+    [[MPRemoteCommandCenter sharedCommandCenter].seekForwardCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        NSLog(@"seekForwardCommand");
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+     [MPRemoteCommandCenter sharedCommandCenter].seekForwardCommand.enabled = YES;
+
+    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = @{};
+    
     return YES;
 }
 
@@ -45,6 +67,10 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+- (BOOL) canBecomeFirstResponder {
+    return YES;
 }
 
 
